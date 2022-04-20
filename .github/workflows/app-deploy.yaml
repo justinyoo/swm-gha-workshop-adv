@@ -7,13 +7,13 @@ on:
 
 jobs:
   call_build_test:
-    uses: justinyoo/swm-gha-workshop-adv/.github/workflow/build-test.yaml@main
+    uses: justinyoo/swm-gha-workshop-adv/.github/workflows/build-test.yaml@main
     with:
       job_name: 'Build and Test for main'
       app-name: api
 
   call_deploy_azure_dev:
-    uses: justinyoo/swm-gha-workshop-adv/.github/workflow/deploy-azure.yaml@main
+    uses: justinyoo/swm-gha-workshop-adv/.github/workflows/deploy-azure.yaml@main
     needs: call_build_test
     with:
       job_name: 'Deploy to Azure DEV'
