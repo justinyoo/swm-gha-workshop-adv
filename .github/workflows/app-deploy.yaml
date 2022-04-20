@@ -31,3 +31,4 @@ jobs:
     secrets:
       azure_credentias: ${{ secrets.AZURE_CREDENTIALS }}
       resource_name: ${{ secrets.RESOURCE_NAME }}
+
