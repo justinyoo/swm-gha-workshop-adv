@@ -10,7 +10,7 @@ jobs:
     uses: justinyoo/swm-gha-workshop-adv/.github/workflows/build-test.yaml@main
     with:
       job_name: 'Build and Test for main'
-      app-name: api
+      app_location: api
 
   call_deploy_azure_dev:
     uses: justinyoo/swm-gha-workshop-adv/.github/workflows/deploy-azure.yaml@main
