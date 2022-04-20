@@ -6,112 +6,17 @@ on:
     - main
 
 jobs:
-  build_test:
-    name: 'Build and Test'
+  call_build_test:
+    uses: justinyoo/swm-gha-workshop-adv/.github/workflow/build-test.yaml@main
+    with:
+      job_name: 'Build and Test for main'
+      app-name: api
 
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Set environment variables
-      shell: bash
-      run: |
-        echo "FUNCTION_APP_PATH=${{ github.workspace }}/api" >> $GITHUB_ENV
-
-    - name: Check environment variables
-      shell: bash
-      run: |
-        echo $FUNCTION_APP_PATH
-
-    - name: Checkout the repo
-      uses: actions/checkout@v2
-    
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '6.x'
-    
-    - name: Restore NuGet packages
-      shell: bash
-      run: |
-        dotnet restore .
-    
-    - name: Build Function App
-      shell: bash
-      run: |
-        dotnet build . -c Release
-    
-    - name: Test Function App
-      shell: bash
-      run: |
-        dotnet test . -c Release
-    
-    - name: Create Function App artifact
-      shell: bash
-      run: |
-        pushd "${{ env.FUNCTION_APP_PATH }}"
-        dotnet publish . -c Release -o published
-        popd
-    
-    - name: Upload Function App artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: apiapp
-        path: ${{ env.FUNCTION_APP_PATH }}/published
-
-  app_deploy_azure:
-    name: 'Deploy to Azure'
-    needs: build_test
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Set environment variables
-      shell: bash
-      run: |
-        echo "RESOURCE_GROUP_NAME=rg-${{ secrets.RESOURCE_NAME }}" >> $GITHUB_ENV
-        echo "FUNCTION_APP_PATH=${{ github.workspace }}/published" >> $GITHUB_ENV
-        echo "FUNCTION_APP_NAME=fncapp-${{ secrets.RESOURCE_NAME }}" >> $GITHUB_ENV
-
-    - name: Check environment variables
-      shell: bash
-      run: |
-        echo $RESOURCE_GROUP_NAME
-        echo $FUNCTION_APP_PATH
-        echo $FUNCTION_APP_NAME
-
-    - name: Download Function App artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: apiapp
-        path: ${{ env.FUNCTION_APP_PATH }}
-    
-    - name: Login to Azure
-      uses: Azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    
-    - name: Get Function App publish profile
-      id: publishprofile
-      uses: aliencube/publish-profile-actions@v1
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      with:
-        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
-        appName: ${{ env.FUNCTION_APP_NAME }}
-    
-    - name: Deploy Function App
-      uses: Azure/functions-action@v1
-      with:
-        app-name: ${{ env.FUNCTION_APP_NAME }}
-        package: ${{ env.FUNCTION_APP_PATH }}
-        publish-profile: ${{ steps.publishprofile.outputs.profile }}
-    
-    - name: Reset Function App publish profile
-      uses: aliencube/publish-profile-actions@v1
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      with:
-        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
-        appName: ${{ env.FUNCTION_APP_NAME }}
-        reset: true
-
+  call_deploy_azure_dev:
+    uses: justinyoo/swm-gha-workshop-adv/.github/workflow/deploy-azure.yaml@main
+    needs: call_build_test
+    with:
+      job_name: 'Deploy to Azure DEV'
+    secrets:
+      azure_credentias: ${{ secrets.AZURE_CREDENTIALS }}
+      resource_name: ${{ secrets.RESOURCE_NAME }}

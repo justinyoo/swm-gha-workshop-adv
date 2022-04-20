@@ -1,0 +1,13 @@
+name: 'SWM: Deploy to Azure'
+
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  call_build_test:
+    uses: justinyoo/swm-gha-workshop-adv/.github/workflow/build-test.yaml@main
+    with:
+      job_name: 'Build and Test for PR'
+      app-name: api
