@@ -114,3 +114,4 @@ jobs:
         resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
         appName: ${{ env.FUNCTION_APP_NAME }}
         reset: true
+
