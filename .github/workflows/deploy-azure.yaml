@@ -6,6 +6,9 @@ on:
       job_name:
         type: string
         required: true
+      environment:
+        type: string
+        required: true
     secrets:
       azure_credentias:
         required: true
@@ -22,9 +25,9 @@ jobs:
     - name: Set environment variables
       shell: bash
       run: |
-        echo "RESOURCE_GROUP_NAME=rg-${{ secrets.resource_name }}" >> $GITHUB_ENV
+        echo "RESOURCE_GROUP_NAME=rg-${{ secrets.resource_name }}${{ inputs.environment }}" >> $GITHUB_ENV
         echo "FUNCTION_APP_PATH=${{ github.workspace }}/published" >> $GITHUB_ENV
-        echo "FUNCTION_APP_NAME=fncapp-${{ secrets.resource_name }}" >> $GITHUB_ENV
+        echo "FUNCTION_APP_NAME=fncapp-${{ secrets.resource_name }}${{ inputs.environment }}" >> $GITHUB_ENV
 
     - name: Check environment variables
       shell: bash

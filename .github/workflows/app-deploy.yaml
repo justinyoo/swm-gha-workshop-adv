@@ -17,6 +17,17 @@ jobs:
     needs: call_build_test
     with:
       job_name: 'Deploy to Azure DEV'
+      environment: 'dev'
+    secrets:
+      azure_credentias: ${{ secrets.AZURE_CREDENTIALS }}
+      resource_name: ${{ secrets.RESOURCE_NAME }}
+
+  call_deploy_azure_prod:
+    uses: justinyoo/swm-gha-workshop-adv/.github/workflows/deploy-azure.yaml@main
+    needs: call_deploy_azure_dev
+    with:
+      job_name: 'Deploy to Azure PROD'
+      environment: 'prod'
     secrets:
       azure_credentias: ${{ secrets.AZURE_CREDENTIALS }}
       resource_name: ${{ secrets.RESOURCE_NAME }}
